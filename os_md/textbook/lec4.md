@@ -160,7 +160,7 @@ while (current) {
 - **Uses a red-black tree** (efficient lookup).
 - **Balances fairness, interactivity, and responsiveness**.
 
-#### **Brain Fuck Scheduler (BFS)**
+#### **BF Scheduler (BFS)**
 - **Single-queue scheduler**.
 - **Designed for low-latency desktop applications**.
 - **Not good for multiprocessor systems**.
