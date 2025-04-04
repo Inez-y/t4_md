@@ -1,204 +1,168 @@
-# 📘 Chapter 3 (Part 2): Introduction to the Physical Layer
+# 📘 Chapter 4: Digital Transmission
+
+ This chapter explains how to **convert data to digital signals** — a key concept in modern networks.
+ 
+---
+
+## 🧩 **4.1 DIGITAL-TO-DIGITAL CONVERSION**
+
+### 🔄 What is Line Coding?
+
+**Line coding** is the process of converting **digital data → digital signal**.
+
+- **At sender**: Encode bits into voltage levels.
+- **At receiver**: Decode the signal back into bits.
 
 ---
 
-## 🔧 **3.4 TRANSMISSION IMPAIRMENT**
+### 🧭 Line Coding Categories
 
-When data travels through physical media (wires, fiber, air), it **gets altered or degraded**. This is called **impairment**, and it affects what the receiver gets.
+#### (A) **Unipolar (e.g., NRZ)**
 
----
+- **All voltages on one side** of the time axis.
+- Bit `1` = Positive voltage  
+  Bit `0` = Zero voltage
 
-### 🧱 Types of Impairment
-
-#### 3.4.1 📉 **Attenuation**
-- **Definition**: Loss of signal strength as it travels.
-- Caused by: Resistance of the medium.
-- **Solution**: Use **amplifiers** to boost signal.
-
-> Think of shouting over a long distance — your voice gets quieter.
-
-#### 3.4.2 🔀 **Distortion**
-- Happens when different frequencies in a **composite signal** travel at **different speeds**.
-- Causes changes in shape/form of the original signal (phase shifts).
-
-#### 3.4.3 📡 **Noise**
-Noise = Unwanted signals that interfere with the message.
-
-| Type          | Description |
-|---------------|-------------|
-| **Thermal noise** | Random motion of electrons in wire |
-| **Induced noise** | From nearby electrical devices (motors) |
-| **Crosstalk**     | Signal "leaks" from one wire to another |
-| **Impulse noise** | Sudden spikes (e.g., lightning, power lines) |
+> ⚠️ No transition = harder to sync clocks
 
 ---
 
-### 📊 **Decibel (dB)** – Measures gain or loss of signal power
+#### (B) **Polar Schemes**
+
+| Scheme | Description |
+|--------|-------------|
+| **NRZ-Level (NRZ-L)** | Voltage level represents bit (e.g., + = 1, − = 0) |
+| **NRZ-Invert (NRZ-I)** | A bit is 1 if the signal **changes**; 0 if it **stays** the same |
+
+---
+
+#### 🕒 Clock Synchronization Issue
+
+- Receiver must match sender's bit intervals.
+- Even a **0.1% clock mismatch** can cause extra/missing bits!
+
+> ✔️ **Manchester / RZ schemes fix this with transitions built in.**
+
+---
+
+#### (B.2) **Self-Synchronizing Polar Schemes**
+
+| Scheme | Description | Bandwidth |
+|--------|-------------|-----------|
+| **RZ** | Signal returns to 0 mid-bit | High |
+| **Manchester** | First half = one level, second half = opposite | High |
+| **Differential Manchester** | Always a transition mid-bit. If bit = 0, extra transition at start | High |
+
+> ✅ More reliable timing  
+> ❌ Higher bandwidth needed
+
+---
+
+#### (C) **Bipolar Schemes**
+
+| Scheme | Bit 0 | Bit 1 |
+|--------|-------|-------|
+| **AMI** | 0 V | Alternates + and − |
+| **Pseudoternary** | Alternates + and − | 0 V |
+
+> ✔️ Synchronization & error detection help  
+> ❌ More complex circuitry
+
+---
+
+## 🎙️ **4.2 ANALOG-TO-DIGITAL CONVERSION**
+
+Used to digitize signals from microphones, cameras, etc.
+
+### 🔁 **Pulse Code Modulation (PCM)**
+
+Three Steps:
+
+---
+
+### ✅ Step 1: **Sampling**
+
+> Taking **snapshots** of an analog signal at regular intervals.
+
+🧠 **Nyquist Theorem**:
+
+To capture signal **without losing info**:
 
 \[
-\text{dB} = 10 \cdot \log_{10} \left( \frac{P_2}{P_1} \right)
+f_s = 2 \cdot f_{max}
 \]
 
-- Positive dB = signal amplified  
-- Negative dB = signal weakened (attenuated)
+Where:
+- \( f_s \) = Sampling rate  
+- \( f_{max} \) = Highest frequency in signal
 
-#### ✔️ Examples:
-- Loss of half the power:  
-  \[
-  10 \cdot \log_{10}(0.5) = -3 \text{ dB}
-  \]
-- Gain of 10× power:  
-  \[
-  10 \cdot \log_{10}(10) = 10 \text{ dB}
-  \]
+| Sampling Rate | Result |
+|---------------|--------|
+| = Nyquist | Faithful signal |
+| > Nyquist | OK but wasteful |
+| < Nyquist | ❌ Aliasing: wrong info |
 
 ---
 
-### 📣 **Signal-to-Noise Ratio (SNR)**
-
+#### ✔️ Problem:
+Low-pass signal with bandwidth 200 kHz  
 \[
-\text{SNR} = \frac{\text{Signal Power}}{\text{Noise Power}}
-\]
-
-\[
-\text{SNR}_{dB} = 10 \cdot \log_{10}(\text{SNR})
-\]
-
-- High SNR → good quality
-- Low SNR → signal is hard to distinguish from noise
-
-#### ✔️ Example:
-Signal = 10 mW, Noise = 1 μW = 0.001 mW
-
-\[
-\text{SNR} = \frac{10}{0.001} = 10000
-\quad \Rightarrow \quad \text{SNR}_{dB} = 40 \text{ dB}
-\]
-
----
-
-## ⚡ **3.5 DATA RATE LIMITS**
-
-How fast can we transmit data?
-
-### 3 Factors Affecting Data Rate:
-1. **Bandwidth** of the channel (Hz)
-2. **Signal levels** (how many bits per signal)
-3. **Noise** in the channel
-
----
-
-### 3.5.1 🧠 **Nyquist Rate** (Noiseless channel)
-
-\[
-\text{BitRate} = 2 \cdot \text{Bandwidth} \cdot \log_2(L)
-\]
-
-- **L** = Number of signal levels (e.g., 2 levels = 1 bit, 4 levels = 2 bits)
-- Assumes **no noise**
-
-#### ✔️ Example:
-Bandwidth = 3000 Hz, Signal Levels = 2  
-\[
-\text{BitRate} = 2 \cdot 3000 \cdot \log_2(2) = 6000 \text{ bps}
-\]
-
----
-
-### 3.5.2 📉 **Shannon Capacity** (Noisy channel)
-
-\[
-\text{Capacity} = \text{Bandwidth} \cdot \log_2(1 + \text{SNR})
-\]
-
-- SNR must be in **normal form**, not dB
-- **Shannon Capacity** gives upper limit for noisy channels
-
-#### ✔️ Example:
-If SNR = 0 →  
-\[
-\text{Capacity} = B \cdot \log_2(1) = 0 \text{ bps}
-\]  
-→ **No communication possible**
-
----
-
-## 🚀 **3.6 PERFORMANCE METRICS**
-
-Let’s define how we **measure network quality**.
-
----
-
-### 3.6.1 📡 **Bandwidth**
-
-| Context        | Meaning                                  |
-|----------------|-------------------------------------------|
-| In Hertz (Hz)  | Range of frequencies (e.g., 0–4kHz)       |
-| In bits/sec    | Max data rate of a channel (e.g., 1 Gbps) |
-
----
-
-### 3.6.2 🚚 **Throughput**
-
-- **Actual rate** of data transmitted through the network.
-- Always **≤ Bandwidth**
-
-#### ✔️ Example:
-Bandwidth = 10 Mbps  
-12,000 frames/min, 10,000 bits/frame  
-\[
-\text{Throughput} = \frac{12000 \cdot 10000}{60} = 2 \text{ Mbps}
+f_s = 2 \cdot 200,000 = \boxed{400,000 \text{ samples/s}}
 \]
 
 ---
 
-### 3.6.3 ⏱️ **Latency (Delay)**
+### ✅ Step 2: **Quantization**
 
-Time it takes a message to travel from **source to destination**.
+> Approximating sampled values to a finite set of levels.
 
+- This introduces **quantization error**.
+- More **bits per sample (n_b)** = less error, better quality
+
+📌 **Quantization SNR (SNR_Q):**
 \[
-\text{Latency} = \text{Propagation Time} + \text{Transmission Time} + \text{Queuing Time} + \text{Processing Delay}
+\text{SNR}_Q = 6.02 \cdot n_b + 1.76 \text{ (in dB)}
 \]
 
-| Term              | Description |
-|-------------------|-------------|
-| **Propagation Time** | Distance / Signal speed |
-| **Transmission Time** | Message size / Bandwidth |
-| **Queuing Time** | Time waiting in buffer |
-| **Processing Delay** | Time for packet processing |
-
-#### ✔️ Example:
-- Distance = 12,000 km = 12,000,000 m  
-- Speed = 2.4×10⁸ m/s  
+#### ✔️ Problem:
+SNR ≥ 40 dB →  
 \[
-\text{Propagation Time} = \frac{12,000,000}{2.4 \cdot 10^8} = 0.05 \text{ s}
-\]
-
-Message = 2.5 kB = 20,000 bits  
-Bandwidth = 1 Gbps = 10⁹ bps  
-\[
-\text{Transmission Time} = \frac{20000}{10^9} = 20 \mu s
+40 = 6.02 \cdot n_b + 1.76 \Rightarrow n_b \approx \boxed{7 \text{ bits/sample}}
 \]
 
 ---
 
-## ✅ Chapter Summary Table
+### ✅ Step 3: **Encoding**
 
-| Concept        | Key Idea |
-|----------------|----------|
-| **Impairments** | Attenuation, Distortion, Noise |
-| **SNR**         | Signal power / Noise power (higher = better) |
-| **Nyquist**     | Max bit rate for noiseless channels |
-| **Shannon**     | Max capacity for noisy channels |
-| **Bandwidth**   | Max theoretical capacity |
-| **Throughput**  | Actual achieved data rate |
-| **Latency**     | Total delay from source to destination |
+> Represent each quantized sample with **n_b** bits.
+
+📌 **Bit Rate**:
+\[
+\text{Bit Rate} = f_s \cdot n_b
+\]
+
+#### ✔️ Problem:
+Human voice: 0–4000 Hz  
+→ \( f_s = 8000 \), \( n_b = 8 \)
+
+\[
+\text{Bit rate} = 8000 \cdot 8 = \boxed{64 \text{ kbps}}
+\]
 
 ---
 
-Would you like me to:
-- Generate **diagrams or flashcards**?
-- Make a **printable cheat sheet**?
-- Provide **calculation practice problems**?
+## 🧠 Chapter 4 Summary Table
 
-Just say the word!
+| Concept | Summary |
+|--------|---------|
+| **Line Coding** | Digital data → digital signals |
+| **Unipolar** | All voltages on one side |
+| **Polar** | Voltages on both sides (NRZ, Manchester, etc.) |
+| **Bipolar** | Three voltage levels (0, +, −) |
+| **Clock Sync** | Fixed by Manchester, RZ, etc. |
+| **PCM** | Analog data → digital signal (via sampling, quantizing, encoding) |
+| **Nyquist Rate** | Minimum sampling = 2 × max frequency |
+| **SNR_Q** | Quality improves with more bits/sample |
+| **Bit Rate** | = sampling rate × bits per sample |
+
+---

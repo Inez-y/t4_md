@@ -1,160 +1,195 @@
-# 📘 Chapter 5: Analog Transmission
+## 📘 **Chapter 6: Multiplexing**
 
-This chapter is about how we **convert digital or analog data into analog signals** for transmission — especially when the medium (like radio or cable) only supports **analog/bandpass signals**.
-
----
-
-## 🔁 **5.1 DIGITAL-TO-ANALOG CONVERSION**
+### 🔑 **Concept**
+- **Multiplexing**: Technique to combine multiple signals for transmission over a single link.
+- Efficient use of bandwidth when the link's capacity > any single source’s requirement.
 
 ---
 
-### 📊 **What Is It?**
-We take **digital data** (0s and 1s) and **modulate** a carrier **analog signal** (a sine wave) by changing:
-- its **amplitude**
-- its **frequency**
-- or its **phase**
+### 🧩 **Types of Multiplexing**
 
-### 🧠 A sine wave is defined by:
-- **Amplitude** (height of the wave)
-- **Frequency** (number of cycles per second)
-- **Phase** (position of the wave at time 0)
+#### 1. 📡 **Frequency-Division Multiplexing (FDM)**  
+- **Analog** technique  
+- Different signals modulated onto **separate carrier frequencies**  
+- **Guard bands** prevent interference  
+- Used in: **radio, cable TV, old phone systems**
 
----
-
-### 🧱 5.1.2 **Amplitude Shift Keying (ASK)**
-
-- Data is encoded by changing **amplitude**
-- Frequency and phase remain **constant**
-
-| Bit | Signal |
-|-----|--------|
-| 1   | High amplitude |
-| 0   | Low or zero amplitude |
-
-> ✅ Simple  
-> ❌ Susceptible to noise (noise often alters amplitude)
+**Example**:  
+- 5 channels @ 100 kHz each with 10 kHz guard bands  
+  ➤ Bandwidth = (5×100) + (4×10) = **540 kHz**
 
 ---
 
-### 📈 5.1.3 **Frequency Shift Keying (FSK)**
-
-- Data is encoded by changing **frequency**
-- Amplitude and phase remain **constant**
-
-| Bit | Signal |
-|-----|--------|
-| 1   | High frequency |
-| 0   | Low frequency |
-
-> ✅ Less affected by noise  
-> ❌ Needs multiple carrier frequencies
+#### 2. 🌈 **Wavelength-Division Multiplexing (WDM)**  
+- **FDM for fiber optics**  
+- Each signal has a different **wavelength (color)** of light  
+- **Prisms** are used to combine/split beams  
+- Very high-speed, suitable for **backbone** links
 
 ---
 
-### 🔁 5.1.4 **Phase Shift Keying (PSK)**
-
-- Data is encoded by changing **phase**
-- Amplitude and frequency remain **constant**
-
-| Bit | Signal |
-|-----|--------|
-| 1   | Phase 0° |
-| 0   | Phase 180° (inverted) |
-
-> ✅ More noise-resistant than ASK  
-> ❌ More complex to implement
+#### 3. ⏱️ **Time-Division Multiplexing (TDM)**  
+- **Digital** technique  
+- Each source gets a **time slot** on a shared link  
+- Time is divided into **frames**, each frame has slots for each source
 
 ---
 
-### 💡 5.1.5 **Quadrature Amplitude Modulation (QAM)**
+### 📊 **TDM Types**
 
-> Combines **ASK + PSK** — modifies both amplitude **and** phase.
+#### A. **Synchronous TDM**
+- Each source gets **fixed** time slots (even if idle)  
+- Needs **synchronization bits** to identify slots  
 
-- Uses **two carriers**:
-  - **In-phase (I)**
-  - **Quadrature (Q)** — 90° shifted
+**Formula**:
+- If `n` sources → Output rate = `n × input rate`
 
-> Each **symbol** carries multiple bits. E.g., 4-QAM = 2 bits per symbol, 16-QAM = 4 bits per symbol.
-
----
-
-### 🌌 **Constellation Diagrams**
-
-Shows the possible signal states in QAM, PSK, etc.
-
-- **X-axis**: In-phase (I)
-- **Y-axis**: Quadrature (Q)
-
-Each dot (symbol) defines:
-1. In-phase amplitude
-2. Quadrature amplitude
-3. Total signal amplitude (using Pythagoras)
-4. Phase angle
-
-#### ✔️ Examples:
-- **BASK**: 2 points on X-axis (0 V, 1 V)
-- **BPSK**: 2 points on X-axis (1 V, -1 V)
-- **QPSK**: 4 points in quadrants (±1, ±1)
+**Example**:  
+- 4 channels sending 100 Bps →  
+  Frame size = 4 × 8 = **32 bits**  
+  Frame rate = 100 fps →  
+  **Link bit rate** = 100 × 32 = **3200 bps**
 
 ---
 
-## 🎙️ **5.2 ANALOG-TO-ANALOG CONVERSION**
-
-This is **analog modulation** — used to transmit analog data (e.g., voice) over **bandpass channels** (like radio).
-
----
-
-### 📶 5.2.1 **Amplitude Modulation (AM)**
-
-- Amplitude changes with the **information signal**
-- Frequency and phase remain constant
-
-> Carrier signal looks like it’s wrapped inside the original analog waveform (envelope)
+#### B. **Statistical TDM**
+- **Dynamic** slot allocation — only to active sources  
+- Needs **address fields** in slots  
+- More efficient, especially when sources are idle  
+- **No sync bits** required
 
 ---
 
-### 🎚️ 5.2.2 **Frequency Modulation (FM)**
+### 🆚 **Synchronous vs Statistical TDM**
 
-- Frequency varies with the **amplitude** of the analog input
-- Amplitude and phase are constant
-
-> Widely used in **FM radio** due to good noise resistance
-
----
-
-### 🔄 5.2.3 **Phase Modulation (PM)**
-
-- Phase varies with the **amplitude** of the analog signal
-- Amplitude and frequency are constant
-
-> Mathematically similar to FM, but instead of using amplitude, PM reacts to the **rate of change** of the amplitude
+| Feature              | Synchronous TDM        | Statistical TDM           |
+|----------------------|------------------------|----------------------------|
+| Slot Allocation      | Fixed                  | Dynamic (based on demand) |
+| Efficiency           | Less efficient (idle slots) | More efficient (no idle slots) |
+| Addressing           | Not required           | Required                   |
+| Synchronization Bits | Needed                 | Not needed                 |
 
 ---
 
-## 📌 Summary Table
+### ✅ **Key Equations & Examples**
 
-| Modulation Type | What changes? | Used for |
-|------------------|----------------|----------|
-| **ASK**          | Amplitude       | Digital → Analog |
-| **FSK**          | Frequency       | Digital → Analog |
-| **PSK**          | Phase           | Digital → Analog |
-| **QAM**          | Amplitude + Phase | Digital → Analog |
-| **AM**           | Amplitude       | Analog → Analog |
-| **FM**           | Frequency       | Analog → Analog |
-| **PM**           | Phase           | Analog → Analog |
+#### **TDM Timing Example**
+- Input: 3 channels @ 1 kbps, 1 bit per frame  
+- Each input time slot = **1 ms**  
+- Output time slot = **1/3 ms**  
+- Frame duration = **1 ms**
+
+#### **Character-Based TDM with Sync**
+- 4 sources, 250 characters/sec, 1 sync bit  
+- Frame size = (4×8) + 1 = **33 bits**  
+- Frame rate = 250 fps  
+- Bit rate = 250 × 33 = **8250 bps**
+
+
+Thanks! Here’s a **concise and organized cheat sheet** for **Chapter 7: Transmission Media**, ideal for quick reference or exam prep:
+
+---
+
+## 📘 **Chapter 7: Transmission Media**
+
+### 🧩 **Classification**
+- **Guided Media** (Wired): signal travels through physical medium
+- **Unguided Media** (Wireless): signal travels through air/free space
 
 ---
 
-## ⚙️ Pros & Cons Comparison
+## ⚙️ **7.2 Guided Media**
 
-| Method | Advantage | Disadvantage |
-|--------|-----------|--------------|
-| **ASK** | Simple | Sensitive to noise |
-| **FSK** | Better noise resistance | Needs more bandwidth |
-| **PSK** | Good noise resistance, efficient | Complex hardware |
-| **QAM** | High data rate | Very complex |
-| **AM** | Simple & cheap | High noise |
-| **FM** | Resistant to noise | More bandwidth |
-| **PM** | Efficient for voice | More complex to implement |
+### 🔌 **1. Twisted-Pair Cable**
+- **Two insulated copper wires** twisted to reduce noise (cancels interference)
+- **Types**:
+  - **UTP**: Unshielded (common)
+  - **STP**: Shielded (less noise, more expensive)
+- **Connector**: RJ-45
+- **Used for**: telephone lines, LAN
+
+> ✅ Pros: cheap, easy to install  
+> ❌ Cons: limited bandwidth, susceptible to EMI  
 
 ---
+
+### 📺 **2. Coaxial Cable**
+- Central copper core + insulator + metallic shield + plastic cover
+- **Better shielding** than twisted-pair, higher bandwidth
+- **Connectors**: BNC (Bayonet Neill-Concelman), T-Connector, Terminator
+- **Used for**: cable TV, older Ethernet
+
+> ✅ Pros: high frequency, good EMI resistance  
+> ❌ Cons: bulky, high attenuation → needs repeaters  
+
+---
+
+### 💡 **3. Fiber-Optic Cable**
+- Transmits **light signals** via total internal reflection
+- **Core** (glass/plastic) + **Cladding** (less dense) + **Jacket**
+- **Modes**:
+  - **Multimode Step-Index**: high distortion
+  - **Multimode Graded-Index**: reduced distortion
+  - **Single Mode**: best quality, minimal distortion
+
+**Connectors**: SC (TV), ST (LAN), MT-RJ (duplex)
+
+**Performance**:
+- Low attenuation
+- Immune to EMI
+- Long-distance support
+- Wavelengths: LAN (850 nm), WAN (1310/1550 nm)
+
+> ✅ Pros: very high bandwidth, secure, low signal loss  
+> ❌ Cons: expensive, difficult installation  
+
+---
+
+## 📡 **7.3 Unguided Media (Wireless)**
+
+### 🔭 **Propagation Methods**
+- **Ground Propagation**: follows Earth's curve (low freq)
+- **Sky Propagation**: reflects off ionosphere (medium freq)
+- **Line-of-Sight**: direct, straight path (high freq)
+
+---
+
+### 📻 **1. Radio Waves (3 kHz – 1 GHz)**
+- **Omnidirectional**  
+- Can **penetrate walls**, used for long-distance  
+- **Applications**: AM/FM radio, TV, paging  
+- **Regulated by**: FCC
+
+> ✅ Pros: long range, indoor use  
+> ❌ Cons: low bandwidth, interference
+
+---
+
+### 📶 **2. Microwaves (1 – 300 GHz)**
+- **Line-of-sight**, **unidirectional**  
+- High bandwidth → good for digital communication  
+- Cannot penetrate walls
+
+**Applications**: satellite, cellular, Wi-Fi, point-to-point links
+
+> ✅ Pros: high bandwidth, focused signal  
+> ❌ Cons: line-of-sight required, cannot go through walls
+
+---
+
+### 🔥 **3. Infrared (300 GHz – 400 THz)**
+- **Line-of-sight**, cannot penetrate walls  
+- High data rate in short ranges  
+- **Not suitable for outdoor use** (sunlight interference)
+
+**Applications**: remote controls, short-range comms (IR ports)
+
+> ✅ Pros: no interference between systems  
+> ❌ Cons: short range, blocked by objects
+
+---
+
+### 📡 **Antennas**
+- **Omnidirectional**: radiates equally in all directions (radio)
+- **Unidirectional**: focused in one direction (microwave, infrared)
+
